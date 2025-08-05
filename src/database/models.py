@@ -1,7 +1,7 @@
 """
 SQLAlchemy database models for Google Trends Website Builder
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 from sqlalchemy import (
     Column, Integer, String, Float, DateTime, Text, Boolean,
@@ -25,7 +25,7 @@ class TrendKeywordModel(Base):
     growth_rate = Column(Float, nullable=False, default=0.0)
     region = Column(String(2), nullable=False, index=True)
     category = Column(String(50), nullable=False, index=True)
-    timestamp = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
+    timestamp = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
     related_keywords = Column(JSON, nullable=True)
     
     # Relationships
@@ -53,7 +53,7 @@ class KeywordDetailsModel(Base):
     related_topics = Column(JSON, nullable=True)
     related_queries = Column(JSON, nullable=True)
     geo_distribution = Column(JSON, nullable=True)
-    timestamp = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
+    timestamp = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
     
     __table_args__ = (
         Index('idx_keyword_details_timestamp', 'keyword', 'timestamp'),
@@ -73,7 +73,7 @@ class DomainInfoModel(Base):
     price = Column(Float, nullable=True)
     registrar = Column(String(100), nullable=True)
     alternatives = Column(JSON, nullable=True)
-    last_checked = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
+    last_checked = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
     
     def __repr__(self):
         return f"<DomainInfo(domain='{self.domain}', available={self.available})>"
@@ -90,7 +90,7 @@ class KeywordAnalysisModel(Base):
     domain_suggestions = Column(JSON, nullable=True)
     content_ideas = Column(JSON, nullable=True)
     estimated_traffic = Column(Integer, nullable=False, default=0)
-    analysis_timestamp = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
+    analysis_timestamp = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
     
     # Foreign key to trend keyword
     trend_keyword_id = Column(Integer, ForeignKey('trend_keywords.id'), nullable=True)
@@ -114,10 +114,10 @@ class TrendsReportModel(Base):
     
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     keyword = Column(String(100), nullable=False, index=True)
-    analysis_date = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
+    analysis_date = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
     recommendations = Column(JSON, nullable=True)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Foreign key to analysis
     analysis_id = Column(Integer, ForeignKey('keyword_analyses.id'), nullable=False)
@@ -142,7 +142,7 @@ class DataQualityLog(Base):
     issue_description = Column(Text, nullable=False)
     severity = Column(String(20), nullable=False, default='medium', index=True)
     resolved = Column(Boolean, nullable=False, default=False, index=True)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
+    created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
     resolved_at = Column(DateTime, nullable=True)
     
     __table_args__ = (
@@ -162,7 +162,7 @@ class SystemMetrics(Base):
     metric_value = Column(Float, nullable=False)
     metric_unit = Column(String(20), nullable=True)
     tags = Column(JSON, nullable=True)
-    timestamp = Column(DateTime, nullable=False, default=datetime.utcnow, index=True)
+    timestamp = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
     
     __table_args__ = (
         Index('idx_metrics_name_timestamp', 'metric_name', 'timestamp'),

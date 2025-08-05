@@ -154,7 +154,8 @@ class DatabaseManager:
         """
         try:
             with self.get_session() as session:
-                session.execute("SELECT 1")
+                from sqlalchemy import text
+                session.execute(text("SELECT 1"))
                 return True
         except Exception as e:
             logger.error(f"Database health check failed: {e}")

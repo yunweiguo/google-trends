@@ -226,7 +226,8 @@ class TestDatabaseManager:
     
     @patch('src.database.connection.create_engine')
     @patch('src.database.connection.sessionmaker')
-    def test_database_manager_initialization(self, mock_sessionmaker, mock_create_engine):
+    @patch('src.database.connection.event')
+    def test_database_manager_initialization(self, mock_event, mock_sessionmaker, mock_create_engine):
         """Test DatabaseManager initialization"""
         mock_engine = Mock()
         mock_create_engine.return_value = mock_engine
@@ -246,6 +247,9 @@ class TestDatabaseManager:
         assert args[0] == "postgresql://test:test@localhost/test"
         assert 'poolclass' in kwargs
         assert 'pool_size' in kwargs
+        
+        # Verify event listeners were set up
+        assert mock_event.listens_for.call_count >= 3  # connect, checkout, checkin
     
     def test_database_manager_health_check(self):
         """Test database health check"""

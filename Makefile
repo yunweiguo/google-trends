@@ -41,8 +41,19 @@ clean:
 	rm -rf htmlcov/
 	rm -rf .coverage
 
+# Database
+db-init:
+	python src/database/init_db.py
+
+db-setup:
+	python scripts/setup_database.py
+
+db-test:
+	pytest tests/test_database.py -v
+
 # Development setup
 setup-dev: install-dev
 	cp .env.example .env
 	@echo "Development environment setup complete!"
 	@echo "Edit .env file with your configuration"
+	@echo "Run 'make db-setup' to initialize the database"
