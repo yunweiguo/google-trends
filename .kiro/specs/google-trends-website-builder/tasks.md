@@ -19,8 +19,8 @@
   - 实现数据库迁移脚本
   - _Requirements: 1.4_
 
-- [ ] 3. 实现Google Trends数据抓取服务
-- [ ] 3.1 集成pytrends库进行数据获取
+- [-] 3. 实现Google Trends数据抓取服务
+- [x] 3.1 集成pytrends库进行数据获取
   - 安装和配置pytrends库
   - 实现TrendsCollector类获取热门关键词
   - 创建获取关键词详细信息的方法
